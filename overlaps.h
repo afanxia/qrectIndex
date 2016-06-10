@@ -10,8 +10,12 @@
 #define				USHORT_BITS			(BYTE_BITS * sizeof(USHORT))
 #define				UINT_BITS			(BYTE_BITS * sizeof(UINT))
 
-#define				MIN(a, b)			(a < b ? a : b)
-#define				MAX(a, b)			(a > b ? a : b)
+#ifndef MIN
+ #define			MIN(a, b)			(a < b ? a : b)
+#endif
+#ifndef MAX
+ #define			MAX(a, b)			(a > b ? a : b)
+#endif
 
 typedef				unsigned int		BOOL;
 typedef				unsigned char		UCHAR;
@@ -93,8 +97,6 @@ struct				rect: public std::vector<UINT>
 	rect			intersection( rect r )	const	{ return rect( u.max( r.u ), v.min( r.v ), r, (rect&)*this ); }
 	UINT			width()					const	{ return (v - u + 1).u.i; }
 	UINT			height()				const	{ return (v - u + 1).v.i; }
-	ULONG			keyU()					const	{ return u.key(); }
-	ULONG			keyV()					const	{ return v.key(); }
 };
 
 //---------------------------------------------------------------
@@ -143,9 +145,9 @@ struct rect_comp: public std::binary_function<rect, rect, BOOL>
 {
     BOOL			operator()(const rect& l, const rect& r) const
 	{
-		if( l.keyU() < r.keyU() ) return true;
-		if( l.keyU() > r.keyU() ) return false;
-		if( l.keyV() < r.keyV() ) return true;
+		if( l.u.key() < r.u.key() ) return true;
+		if( l.u.key() > r.u.key() ) return false;
+		if( l.v.key() < r.v.key() ) return true;
 		return false;
 	}
 };
