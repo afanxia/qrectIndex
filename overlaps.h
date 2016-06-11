@@ -130,7 +130,7 @@ struct				quad: public rect_list
 	rect			intersection( rect r )	const	{ return rect( origin(), limit() ).intersection( r ); }
 	vec2			origin()				const	{ return o << Q_POWER( s ); }
 	vec2			limit()					const	{ return origin() + extent() ;}
-	vec2			center()				const	{ return o + extent() / 2; }
+	vec2			center()				const	{ return origin() + extent() / 2; }
 	UINT			extent()				const	{ return Q_EXTENT( s ); }
 	UINT			index()					const	{ return (o & 1).index(); }
 	ULONG			key()					const	{ return center().key(); }
@@ -143,7 +143,7 @@ struct				quad: public rect_list
 //---------------------------------------------------------------
 struct rect_comp: public std::binary_function<rect, rect, BOOL>
 {
-    BOOL			operator()(const rect& l, const rect& r) const
+	BOOL			operator()( const rect& l, const rect& r) const
 	{
 		if( l.u.key() < r.u.key() ) return true;
 		if( l.u.key() > r.u.key() ) return false;
@@ -154,7 +154,7 @@ struct rect_comp: public std::binary_function<rect, rect, BOOL>
 
 struct quad_comp: public std::binary_function<quad, quad, BOOL>
 {
-    BOOL			operator()(const quad& l, const quad& r) const
+	BOOL			operator()( const quad& l, const quad& r ) const
 	{
 		return (l.key() < r.key());
 	}
@@ -206,14 +206,11 @@ private:
 
 			//iterate current quad's children
 			quad s = q.child().sibling( i );
-			if( !s.contains( r ) )
+			if( entry = s.contains( r ) )
 			{
-				entry = false;
-				continue;
+				q = s;
+				i = -1;
 			}
-			q = s;
-			i = -1;
-			entry = true;
 		}
 
 		//create quad and register rectangle into it
